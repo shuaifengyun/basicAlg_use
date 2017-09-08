@@ -10,7 +10,7 @@
  *
  * Filename      : CryptoVerifyTaDebug.c
  * Author        : Shuai Fengyun
- * Mail          : shuai.fengyun@126.com
+ * Mail          : shuaifengyun@126.com
  * Create Time   : Fri 30 Oct 2015 03:51:11 AM EDT
  ****************************************************************************************
  */
