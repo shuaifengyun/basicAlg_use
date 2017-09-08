@@ -9,7 +9,7 @@
  *
  * Filename      : CryptoVerifyTaEntry.c
  * Author        : Shuai Fengyun
- * Mail          : shuai.fengyun@126.com
+ * Mail          : shuaifengyun@126.com
  * Create Time   : Fri 30 Oct 2015 02:31:02 AM EDT
  ****************************************************************************************
  */
