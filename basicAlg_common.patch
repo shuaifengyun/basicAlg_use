@@ -1,0 +1,72 @@
+diff --git a/common.mk b/common.mk
+index 7b1b4a5..6052164 100644
+--- a/common.mk
++++ b/common.mk
+@@ -20,6 +20,7 @@ OPTEE_EXAMPLES_PATH		?= $(ROOT)/optee_examples
+ BENCHMARK_APP_PATH		?= $(ROOT)/optee_benchmark
+ BENCHMARK_APP_OUT		?= $(BENCHMARK_APP_PATH)/out
+ LIBYAML_LIB_OUT			?= $(BENCHMARK_APP_OUT)/libyaml/out/lib
++BASIC_ALG_USE_PATH		?= $(ROOT)/basicAlg_use
+ 
+ # default high verbosity. slow uarts shall specify lower if prefered
+ CFG_TEE_CORE_LOG_LEVEL		?= 3
+@@ -306,7 +307,7 @@ OPTEE_OS_CLEAN_COMMON_FLAGS ?= $(OPTEE_OS_COMMON_EXTRA_FLAGS)
+ ifeq ($(CFG_TEE_BENCHMARK),y)
+ optee-os-clean-common: benchmark-app-clean-common
+ endif
+-optee-os-clean-common: xtest-clean optee-examples-clean
++optee-os-clean-common: xtest-clean optee-examples-clean basicAlg_use-clean
+ 	$(MAKE) -C $(OPTEE_OS_PATH) $(OPTEE_OS_CLEAN_COMMON_FLAGS) clean
+ 
+ OPTEE_CLIENT_COMMON_FLAGS ?= CROSS_COMPILE=$(CROSS_COMPILE_NS_USER) \
+@@ -371,6 +372,26 @@ optee-examples-clean-common:
+ 			$(OPTEE_EXAMPLES_CLEAN_COMMON_FLAGS) clean
+ 
+ ################################################################################
++# basicAlg use 
++################################################################################
++OPTEE_BASICALG_COMMON_FLAGS ?= HOST_CROSS_COMPILE=$(CROSS_COMPILE_NS_USER)\
++	TA_CROSS_COMPILE=$(CROSS_COMPILE_S_USER) \
++	TA_DEV_KIT_DIR=$(OPTEE_OS_TA_DEV_KIT_DIR) \
++	TEEC_EXPORT=$(OPTEE_CLIENT_EXPORT)
++
++.PHONY: basicAlg_use-common
++basicAlg_use-common: optee-os optee-client
++	$(MAKE) -C $(BASIC_ALG_USE_PATH) $(OPTEE_BASICALG_COMMON_FLAGS)
++
++OPTEE_BASICALG_CLEAN_COMMON_FLAGS ?= TA_DEV_KIT_DIR=$(OPTEE_OS_TA_DEV_KIT_DIR)
++
++.PHONY: basicAlg_use-clean-common
++basicAlg_use-clean-common:
++	$(MAKE) -C $(BASIC_ALG_USE_PATH) \
++			$(OPTEE_BASICALG_CLEAN_COMMON_FLAGS) clean
++
++
++################################################################################
+ # benchmark_app
+ ################################################################################
+ BENCHMARK_APP_COMMON_FLAGS ?= CROSS_COMPILE=$(CROSS_COMPILE_NS_USER) \
+@@ -409,7 +430,7 @@ ifeq ($(CFG_TEE_BENCHMARK),y)
+ filelist-tee-common: benchmark-app
+ endif
+ filelist-tee-common: fl:=$(GEN_ROOTFS_FILELIST)
+-filelist-tee-common: optee-client xtest optee-examples
++filelist-tee-common: optee-client xtest optee-examples basicAlg_use
+ 	@echo "# filelist-tee-common /start" 				> $(fl)
+ 	@echo "dir /lib/optee_armtz 755 0 0" 				>> $(fl)
+ 	@if [ -e $(OPTEE_EXAMPLES_PATH)/out/ca ]; then \
+@@ -454,6 +475,14 @@ filelist-tee-common: optee-client xtest optee-examples
+ 			"$(OPTEE_GENDRV_MODULE) 755 0 0" \
+ 									>> $(fl); \
+ 	fi
++	@echo "#basic alg use" >> $(fl)
++	@if [ -e $(BASIC_ALG_USE_PATH)/host/basicAlgUse ]; then \
++		echo "file /bin/basicAlgUse" \
++			"$(BASIC_ALG_USE_PATH)/host/basicAlgUse 755 0 0"	>> $(fl); \
++		echo "file /lib/optee_armtz/ebb6f4b5-7e33-4ad2-9802-e64f2a7cc20c.ta" \
++			"$(BASIC_ALG_USE_PATH)/ta/ebb6f4b5-7e33-4ad2-9802-e64f2a7cc20c.ta 444 0 0" \
++			>> $(fl); \
++	fi
+ 	@echo "# OP-TEE Client" 					>> $(fl)
+ 	@echo "file /bin/tee-supplicant $(OPTEE_CLIENT_EXPORT)/bin/tee-supplicant 755 0 0" \
+ 									>> $(fl)
