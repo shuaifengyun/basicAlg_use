@@ -67,7 +67,7 @@
  *                          VARIABLES USED ONLY BY THIS MODULE
  *******************************************************************************
 */
-static bool g_TaskInitFlag = false;    /* Flag if the task done initialize operation */
+static int g_TaskInitFlag = -1;    /* Flag if the task done initialize operation */
 TEEC_UUID svc_id = CRYPTO_VERIFY_UUID_ID;
 TEEC_Context g_TaskContext;
 
@@ -86,7 +86,7 @@ static int l_CryptoVerifyCa_TaskInit(void)
     int l_RetVal = OK;
     
     /**1) Check if need to do task initialization operation */
-    if(false == g_TaskInitFlag)
+    if(-1 == g_TaskInitFlag)
     {
         result = TEEC_InitializeContext(NULL, &g_TaskContext);
         if(result != TEEC_SUCCESS) 
@@ -96,7 +96,7 @@ static int l_CryptoVerifyCa_TaskInit(void)
         } 
         else 
         {
-            g_TaskInitFlag = true;
+            g_TaskInitFlag = 1;
             TF("InitializeContext success\n");
             l_RetVal = OK;
         }
@@ -117,7 +117,7 @@ static int l_CryptoVerifyCa_OpenSession(TEEC_Session* session)
     if(result != TEEC_SUCCESS) 
     {
         TF("OpenSession failed, ReturnCode=0x%x, ReturnOrigin=0x%x\n", result, origin);
-        g_TaskInitFlag = false;
+        g_TaskInitFlag = -1;
         l_RetVal = FAIL;
     } 
     else 
