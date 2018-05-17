@@ -47,8 +47,6 @@
 #define RSA_2048        2U       /* Do RSA authentic operation */
 
 
-#define false   -1
-#define true     0
 
 
 
@@ -73,7 +71,6 @@ typedef signed char    INT8;     /**< Typedef for 8bits signed integer    */
 typedef signed short   INT16;    /**< Typedef for 16bits signed integer   */
 typedef signed int     INT32;    /**< Typedef for 32bits signed integer   */
 typedef char           CHAR;     /**< Typedef for char                    */
-typedef int bool;
 
 
 
