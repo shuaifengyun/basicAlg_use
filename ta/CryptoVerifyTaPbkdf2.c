@@ -261,6 +261,12 @@ void g_CryptoTaPbkdf_PBKDF2(CHAR P[],int Plen, CHAR S[], int Slen, int c,int dkL
     } 
 
     /**4) Copy the result data into output buffer */
+
+    if (dkLen > 512) 
+    {
+        return TEE_ERROR_BAD_PARAMETERS;
+    }
+
     TEE_MemMove(output, resultBuf, dkLen);
 }
 
